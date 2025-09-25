@@ -1,0 +1,35 @@
+# name: List Files Workflow
+
+# on: 
+#   work_dispatch
+
+# jobs:
+  
+#     runs-on: ubuntu-latest  
+#     - name: Clone GuillaumeFalourd/poc-github-actions PUBLIC repositor
+#       uses: GuillaumeFalourd/clone-github-repo-action@v2.1
+#       with:
+#         depth: 1
+#         branch: 'main'
+#         owner: 'GuillaumeFalourd'
+#         repository: 'https://github.com/Dinesh756/Docker'
+name: List Files Workflow
+
+on: 
+  workflow_dispatch   
+
+jobs:
+  list-files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone GuillaumeFalourd/poc-github-actions PUBLIC repo
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.1
+        with:
+          depth: 1
+          branch: 'main'
+          owner: 'Dinesh756'
+          repository: 'Docker'
+
+      - name: List files
+        run: ls -al
