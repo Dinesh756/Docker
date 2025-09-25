@@ -1,35 +1,85 @@
-# name: List Files Workflow
+name: 3-Tier App CI/CD
 
-# on: 
-#   work_dispatch
-
-# jobs:
-  
-#     runs-on: ubuntu-latest  
-#     - name: Clone GuillaumeFalourd/poc-github-actions PUBLIC repositor
-#       uses: GuillaumeFalourd/clone-github-repo-action@v2.1
-#       with:
-#         depth: 1
-#         branch: 'main'
-#         owner: 'GuillaumeFalourd'
-#         repository: 'https://github.com/Dinesh756/Docker'
-name: List Files Workflow
-
-on: 
-  workflow_dispatch   
+on:
+  workflow_dispatch:   # 👈 Manual trigger from GitHub Actions tab
 
 jobs:
-  list-files:
+  build-frontend:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: frontend
     steps:
-      - name: Clone GuillaumeFalourd/poc-github-actions PUBLIC repo
-        uses: GuillaumeFalourd/clone-github-repo-action@v2.1
-        with:
-          depth: 1
-          branch: 'main'
-          owner: 'Dinesh756'
-          repository: 'Docker'
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: List files
-        run: ls -al
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: frontend/dist
+
+  build-backend:
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      mongo:
+        image: mongo:6
+        ports:
+          - 27017:27017
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run backend tests
+        env:
+          MONGO_URL: mongodb://localhost:27017/testdb
+        run: npm test
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-build
+          path: backend
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, build-backend]
+    steps:
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+          path: frontend-dist
+
+      - name: Download backend artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-build
+          path: backend-dist
+
+      - name: Deploy (placeholder)
+        run: |
+          echo "Deploy frontend + backend here (via SSH, Docker, or Cloud CLI)"
