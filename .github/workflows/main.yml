@@ -18,7 +18,7 @@ jobs:
           EC2_SSH_PRIVATE_KEY: $EC2_SSH_PRIVATE_KEY
           EC2_URL: $EC2_URL
 
-      - name: Create a new file on the EC2 instance with "hello-world"
+      - name: Test SSH Connection
         run: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "echo 'hello-world' >> new_file.txt"
 
       - name: Checkout code
@@ -33,5 +33,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Move to Docker folder and run docker compose on EC2
-        run: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "ls && cd Docker && git pull origin main && docker compose up --build -d && docker ps -a"
+      - name: Deploy on EC2 (Force Pull Latest Code)
+        run: |
+          ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "
+            cd Docker &&
+            git fetch origin &&
+            git reset --hard origin/main &&
+            docker compose up --build -d &&
+            docker ps -a
+          "
