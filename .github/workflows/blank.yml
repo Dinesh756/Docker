@@ -26,5 +26,4 @@ jobs:
         branch: 'main'
         owner: 'Dinesh756'
         repository: 'Docker'
-        run : |
-        ls -lrt > new_file.txt
+        run : ls -lrt > new_file.txt
