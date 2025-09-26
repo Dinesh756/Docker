@@ -1,7 +1,8 @@
 name: CI/CD for 3tier_app
 
 on:
-    workflow_dispatch
+  workflow_dispatch:
+
 jobs:
   setup-ssh:
     runs-on: ubuntu-latest
@@ -10,21 +11,24 @@ jobs:
       EC2_URL: ${{ secrets.EC2_URL }}
       EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
     steps:
-    - name: Setup SSH for EC2
-      uses: omarhosny206/setup-ssh-for-ec2@v1.0.0
-      with:
-          EC2_SSH_PRIVATE_KEY: $EC2_SSH_PRIVATE_KEY
-          EC2_URL: $EC2_URL
-    # then you can run commands/scripts directly on the EC2 instance e.g.:
-    - name: Create a new file on the EC2 instance with "hello-world"
-      run: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "echo "hello-world" >> new_file.txt"
+      - name: Setup SSH for EC2
+        uses: omarhosny206/setup-ssh-for-ec2@v1.0.0
+        with:
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EC2_URL: ${{ secrets.EC2_URL }}
 
-    - name: Clone GuillaumeFalourd/poc-github-actions PUBLIC repository
-      uses: GuillaumeFalourd/clone-github-repo-action@v2.3
-      with:
-        depth: 1
-        branch: 'main'
-        owner: 'Dinesh756'
-        repository: 'Docker'
-        
-    
+      - name: Create a new file on the EC2 instance with "hello-world"
+        run: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "echo 'hello-world' >> new_file.txt"
+
+      - name: Clone your Docker repository
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          depth: 1
+          branch: 'main'
+          owner: 'Dinesh756'
+          repository: 'Docker'
+
+      - name: List files and save output
+        run: |
+          ls -lrt > new_file.txt
+          cat new_file.txt
