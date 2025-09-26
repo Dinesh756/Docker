@@ -25,5 +25,6 @@ jobs:
         depth: 1
         branch: 'main'
         owner: 'Dinesh756'
-        repository: 'Docker'
-        run : ls -lrt > new_file.txt
+        repository: 'Dinesh/Docker'
+    
+    
