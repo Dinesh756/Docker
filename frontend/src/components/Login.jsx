@@ -33,7 +33,7 @@ export default function Login() {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
       />
-      <button type="submit">Login</button>
+      <button type="submit">Login with Your ID</button>
     </form>
   );
 }
