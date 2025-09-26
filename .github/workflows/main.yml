@@ -34,4 +34,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Move to Docker folder and run docker compose on EC2
-        run: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "cd Docker && docker compose up --build -d"
+        run: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "ls && cd Docker && docker compose up --build -d"
