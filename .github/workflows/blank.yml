@@ -19,13 +19,12 @@ jobs:
     - name: Create a new file on the EC2 instance with "hello-world"
       run: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_URL "echo "hello-world" >> new_file.txt"
 
-  clone-job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout current repo
-        uses: actions/checkout@v3
-
-      - name: Clone another repo
-        run: |
-         git clone https://github.com/Dinesh756/Docker
-          ls -la > new_file.txt
+    - name: Clone GuillaumeFalourd/poc-github-actions PUBLIC repository
+      uses: GuillaumeFalourd/clone-github-repo-action@v2.1
+      with:
+        depth: 1
+        branch: 'main'
+        owner: 'Dinesh756'
+        repository: 'Docker'
+        run : |
+        ls -lrt > new_file.txt
