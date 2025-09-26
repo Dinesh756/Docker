@@ -33,7 +33,7 @@ export default function Login() {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
       />
-      <button type="submit">Login with Your ID</button>
+      <button type="submit">Login With Your NIAT ID</button>
     </form>
   );
 }
